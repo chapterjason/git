@@ -1,6 +1,6 @@
 {
   "name": "@mscs/git",
-  "version": "0.1.0",
+  "version": "0.1.1-DEV",
   "description": "Interact programmatically with git",
   "repository": {
     "type": "git",
