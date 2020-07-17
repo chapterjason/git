@@ -1,0 +1,56 @@
+name: Publish Package
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Prepare git
+        run: |
+          git config --global user.email "jschilling@media-service.com"
+          git config --global user.name "Jason Schilling (actions)"
+
+      - run: yarn install
+
+      - run: yarn run lint
+
+      - run: yarn run test --ci --runInBand
+
+      - run: yarn run build
+
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+
+      - name: Prepare git
+        run: |
+          git config --global user.email "jschilling@media-service.com"
+          git config --global user.name "Jason Schilling (actions)"
+
+      - run: yarn install
+
+      - run: yarn run lint
+
+      - run: yarn run test --ci --runInBand
+
+      - run: yarn run build
+
+      - run: yarn publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
